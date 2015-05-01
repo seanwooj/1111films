@@ -49,14 +49,6 @@ module.exports = function(grunt){
           {
             expand: true,
             flatten: true,
-            src: '<%= globalConfig.bower_path %>/masonry/masonry.js',
-            dest: '<%= globalConfig.scripts %>/vendor/',
-            filter: 'isFile'
-          },
-
-          {
-            expand: true,
-            flatten: true,
             src: '<%= globalConfig.bower_path %>/skeleton/css/skeleton.css',
             dest: '<%= globalConfig.sass %>/vendor/',
             ext: '.scss',

@@ -1,3 +1,4 @@
+window.eef = window.eef || {};
 
 /*!
  * jQuery JavaScript Library v2.1.4
