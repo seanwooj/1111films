@@ -22,7 +22,7 @@ module.exports = function(grunt){
       },
 
       dist: {
-        src: ['js/development/**/*.js', 'js/vendor/**/*.js'],
+        src: ['js/vendor/**/*.js', 'js/development/**/*.js'],
         dest: 'js/<%= pkg.name %>.js'
       }
     },
@@ -51,6 +51,15 @@ module.exports = function(grunt){
             flatten: true,
             src: '<%= globalConfig.bower_path %>/skeleton/css/skeleton.css',
             dest: '<%= globalConfig.sass %>/vendor/',
+            ext: '.scss',
+            filter: 'isFile'
+          },
+
+          {
+            expand: true,
+            flatten: true,
+            src: '<%= globalConfig.bower_path %>/modernizr/modernizr.js',
+            dest: '<%= globalConfig.scripts %>/vendor/',
             ext: '.scss',
             filter: 'isFile'
           }
@@ -85,7 +94,7 @@ module.exports = function(grunt){
 
     watch: {
       files: ['<%= jshint.files %>', 'haml/**/*.haml', 'sass/**/*.scss'],
-      tasks: ['jshint', 'haml', 'concat', 'sass']
+      tasks: ['haml', 'concat', 'sass']
     },
 
     haml: {

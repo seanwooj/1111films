@@ -1,5 +1,3 @@
-window.eef = window.eef || {};
-
 /*!
  * jQuery JavaScript Library v2.1.4
  * http://jquery.com/
@@ -9211,210 +9209,6 @@ return jQuery;
 
 }));
 
-/*!
- * Masonry v3.3.0
- * Cascading grid layout library
- * http://masonry.desandro.com
- * MIT License
- * by David DeSandro
- */
-
-( function( window, factory ) {
-  'use strict';
-  // universal module definition
-  if ( typeof define === 'function' && define.amd ) {
-    // AMD
-    define( [
-        'outlayer/outlayer',
-        'get-size/get-size',
-        'fizzy-ui-utils/utils'
-      ],
-      factory );
-  } else if ( typeof exports === 'object' ) {
-    // CommonJS
-    module.exports = factory(
-      require('outlayer'),
-      require('get-size'),
-      require('fizzy-ui-utils')
-    );
-  } else {
-    // browser global
-    window.Masonry = factory(
-      window.Outlayer,
-      window.getSize,
-      window.fizzyUIUtils
-    );
-  }
-
-}( window, function factory( Outlayer, getSize, utils ) {
-
-'use strict';
-
-// -------------------------- masonryDefinition -------------------------- //
-
-  // create an Outlayer layout class
-  var Masonry = Outlayer.create('masonry');
-
-  Masonry.prototype._resetLayout = function() {
-    this.getSize();
-    this._getMeasurement( 'columnWidth', 'outerWidth' );
-    this._getMeasurement( 'gutter', 'outerWidth' );
-    this.measureColumns();
-
-    // reset column Y
-    var i = this.cols;
-    this.colYs = [];
-    while (i--) {
-      this.colYs.push( 0 );
-    }
-
-    this.maxY = 0;
-  };
-
-  Masonry.prototype.measureColumns = function() {
-    this.getContainerWidth();
-    // if columnWidth is 0, default to outerWidth of first item
-    if ( !this.columnWidth ) {
-      var firstItem = this.items[0];
-      var firstItemElem = firstItem && firstItem.element;
-      // columnWidth fall back to item of first element
-      this.columnWidth = firstItemElem && getSize( firstItemElem ).outerWidth ||
-        // if first elem has no width, default to size of container
-        this.containerWidth;
-    }
-
-    var columnWidth = this.columnWidth += this.gutter;
-
-    // calculate columns
-    var containerWidth = this.containerWidth + this.gutter;
-    var cols = containerWidth / columnWidth;
-    // fix rounding errors, typically with gutters
-    var excess = columnWidth - containerWidth % columnWidth;
-    // if overshoot is less than a pixel, round up, otherwise floor it
-    var mathMethod = excess && excess < 1 ? 'round' : 'floor';
-    cols = Math[ mathMethod ]( cols );
-    this.cols = Math.max( cols, 1 );
-  };
-
-  Masonry.prototype.getContainerWidth = function() {
-    // container is parent if fit width
-    var container = this.options.isFitWidth ? this.element.parentNode : this.element;
-    // check that this.size and size are there
-    // IE8 triggers resize on body size change, so they might not be
-    var size = getSize( container );
-    this.containerWidth = size && size.innerWidth;
-  };
-
-  Masonry.prototype._getItemLayoutPosition = function( item ) {
-    item.getSize();
-    // how many columns does this brick span
-    var remainder = item.size.outerWidth % this.columnWidth;
-    var mathMethod = remainder && remainder < 1 ? 'round' : 'ceil';
-    // round if off by 1 pixel, otherwise use ceil
-    var colSpan = Math[ mathMethod ]( item.size.outerWidth / this.columnWidth );
-    colSpan = Math.min( colSpan, this.cols );
-
-    var colGroup = this._getColGroup( colSpan );
-    // get the minimum Y value from the columns
-    var minimumY = Math.min.apply( Math, colGroup );
-    var shortColIndex = utils.indexOf( colGroup, minimumY );
-
-    // position the brick
-    var position = {
-      x: this.columnWidth * shortColIndex,
-      y: minimumY
-    };
-
-    // apply setHeight to necessary columns
-    var setHeight = minimumY + item.size.outerHeight;
-    var setSpan = this.cols + 1 - colGroup.length;
-    for ( var i = 0; i < setSpan; i++ ) {
-      this.colYs[ shortColIndex + i ] = setHeight;
-    }
-
-    return position;
-  };
-
-  /**
-   * @param {Number} colSpan - number of columns the element spans
-   * @returns {Array} colGroup
-   */
-  Masonry.prototype._getColGroup = function( colSpan ) {
-    if ( colSpan < 2 ) {
-      // if brick spans only one column, use all the column Ys
-      return this.colYs;
-    }
-
-    var colGroup = [];
-    // how many different places could this brick fit horizontally
-    var groupCount = this.cols + 1 - colSpan;
-    // for each group potential horizontal position
-    for ( var i = 0; i < groupCount; i++ ) {
-      // make an array of colY values for that one group
-      var groupColYs = this.colYs.slice( i, i + colSpan );
-      // and get the max value of the array
-      colGroup[i] = Math.max.apply( Math, groupColYs );
-    }
-    return colGroup;
-  };
-
-  Masonry.prototype._manageStamp = function( stamp ) {
-    var stampSize = getSize( stamp );
-    var offset = this._getElementOffset( stamp );
-    // get the columns that this stamp affects
-    var firstX = this.options.isOriginLeft ? offset.left : offset.right;
-    var lastX = firstX + stampSize.outerWidth;
-    var firstCol = Math.floor( firstX / this.columnWidth );
-    firstCol = Math.max( 0, firstCol );
-    var lastCol = Math.floor( lastX / this.columnWidth );
-    // lastCol should not go over if multiple of columnWidth #425
-    lastCol -= lastX % this.columnWidth ? 0 : 1;
-    lastCol = Math.min( this.cols - 1, lastCol );
-    // set colYs to bottom of the stamp
-    var stampMaxY = ( this.options.isOriginTop ? offset.top : offset.bottom ) +
-      stampSize.outerHeight;
-    for ( var i = firstCol; i <= lastCol; i++ ) {
-      this.colYs[i] = Math.max( stampMaxY, this.colYs[i] );
-    }
-  };
-
-  Masonry.prototype._getContainerSize = function() {
-    this.maxY = Math.max.apply( Math, this.colYs );
-    var size = {
-      height: this.maxY
-    };
-
-    if ( this.options.isFitWidth ) {
-      size.width = this._getContainerFitWidth();
-    }
-
-    return size;
-  };
-
-  Masonry.prototype._getContainerFitWidth = function() {
-    var unusedCols = 0;
-    // count unused columns
-    var i = this.cols;
-    while ( --i ) {
-      if ( this.colYs[i] !== 0 ) {
-        break;
-      }
-      unusedCols++;
-    }
-    // fit container to columns that have been used
-    return ( this.cols - unusedCols ) * this.columnWidth - this.gutter;
-  };
-
-  Masonry.prototype.needsResizeLayout = function() {
-    var previousWidth = this.containerWidth;
-    this.getContainerWidth();
-    return previousWidth !== this.containerWidth;
-  };
-
-  return Masonry;
-
-}));
-
 //     Underscore.js 1.8.3
 //     http://underscorejs.org
 //     (c) 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -10963,3 +10757,157 @@ return jQuery;
     });
   }
 }.call(this));
+
+window.eef = window.eef || {};
+
+// This was derived from this useful article:
+// http://zerosixthree.se/create-a-responsive-header-video-with-graceful-degradation/
+
+var headerVideo = (function($, document) {
+
+  var settings = {
+    container: $('.header-video'),
+    header: $('.header-video--media'),
+    videoTrigger: $('#video-trigger'),
+    autoPlayVideo: false
+  };
+
+  var init = function(options){
+    settings = $.extend(settings, options);
+
+    console.log(settings);
+
+    getVideoDetails();
+    setFluidContainer();
+    bindClickAction();
+
+    if(videoDetails.teaser) {
+      appendTeaserVideo();
+    }
+
+    if(settings.autoPlayVideo) {
+      appendFrame();
+    }
+
+  };
+
+  var getVideoDetails = function(){
+    videoDetails = {
+      id: settings.header.data('video-src'),
+      teaser: settings.header.data('teaser-source'),
+      provider: settings.header.data('provider'),
+      videoHeight: settings.header.data('video-height'),
+      videoWidth: settings.header.data('video-width')
+    };
+
+    console.log(videoDetails);
+
+    return videoDetails;
+  };
+
+  var setFluidContainer = function(){
+    // set aspect ratio as vid height / vid width
+    var aspectRatio = videoDetails.videoHeight / videoDetails.videoWidth;
+    // give the container a data attribute with the aspect ratio
+    settings.container.data('aspectRatio', aspectRatio);
+
+    // upon window resize, do the following
+    $(window).resize(function(){
+
+      // get the window height and width
+      var winWidth = $(window).width(),
+          winHeight = $(window).height();
+
+      // set the container width and height based on window size
+      // and aspect ratio
+      settings.container
+        // set the width to equal the window width
+        .width(winWidth)
+        // set the height to equal the window height * the aspect ratio
+        .height(winHeight / settings.container.data('aspectRatio'));
+
+      //  if the window height is less than the container height
+      if(winHeight < settings.container.height()) {
+        // set container height and width to the window height and width
+        settings.container
+          .width(winWidth)
+          .height(winHeight);
+      }
+
+    // trigger the 'resize' event once this is over
+    }).trigger('resize');
+
+  };
+
+  var createFrame = function(){
+
+    var html,
+        provider = videoDetails.provider,
+        id = videoDetails.id;
+
+    if(provider === 'youtube') {
+      html = '<iframe id="video-iframe" src="//www.youtube.com/embed/'+id+'?rel=0&hd=1&autohide=1&showinfo=0&autoplay=1&enablejsapi=1&origin=*" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>';
+    } else if (provider === 'vimeo') {
+      html = '<iframe id="video-iframe" src="//player.vimeo.com/video/'+id+'?title=0&byline=0&portrait=0&color=3d96d2&autoplay=1" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>';
+    } else if (provider === 'html5') {
+      html = '<video id="video-iframe" autoplay="true" loop="loop" id="video"><source src="' + id + '.mp4" type="video/mp4"><source src="'+id+'.ogv" type="video/ogg"></video>';
+    }
+
+    if(html){
+      return html;
+    } else {
+      console.error("NO HTML TO RETURN!!")
+    }
+
+  };
+
+  var appendTeaserVideo = function(){
+    if(Modernizr.video && !isMobile()){
+      var source = videoDetails.teaser,
+          html = '<video autoplay="true" loop="loop" muted id="teaser-video" class="teaser-video"><source src="'+ source + '.mp4" type="video/mp4"><source src="'+source+'.ogv" type="video/ogg"></video>';
+
+      settings.container.append(html);
+    }
+  };
+
+  var isMobile = function(){
+    return Modernizr.touch;
+  };
+
+  var appendFrame = function(){
+    // hide the header
+    settings.header.hide();
+
+    // append the frame that is built when we call createFrame
+    settings.container.append(createFrame());
+    // hide the teaser video
+    $('#teaser-video').hide();
+
+    // if there is a video trigger, hide it.
+    if(settings.videoTrigger){
+      settings.videoTrigger.fadeOut('slow');
+    }
+  };
+
+  var bindClickAction = function(){
+    settings.videoTrigger.on('click', function(e) {
+      e.preventDefault();
+      appendFrame();
+    });
+  };
+
+  return {
+    init: init
+  };
+
+})(jQuery, document);
+
+$(function(){
+  headerVideo.init({
+    container: $('.header-video'),
+    header: $('.header-video--media'),
+    videoTrigger: $("#video-trigger"),
+    autoPlayVideo: true
+  });
+});
+

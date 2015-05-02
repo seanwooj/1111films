@@ -1,7 +1,42 @@
-
 /* Vendor */
 
 @import 'vendor/skeleton';
 
+/* Components */
+
+@import 'components/_video';
+@import 'components/_buttons';
+
 
 /* Move into own directory */
+
+body {
+  margin: 0;
+  font-family: 'Roboto', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+}
+
+.masthead {
+  position: relative;
+  overflow: hidden;
+  .masthead-table {
+    display: table;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    .masthead-inner {
+      display: table-cell;
+      vertical-align: middle;
+      text-align: center;
+      color: white;
+      h1 {
+        font-weight: 100;
+      }
+      .cta-button {
+        color: white;
+        font-weight: 300;
+      }
+    }
+  }
+}

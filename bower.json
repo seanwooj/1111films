@@ -20,6 +20,8 @@
   },
   "devDependencies": {
     "skeleton-sass": "~2.0.4",
-    "skeleton": "~2.0.4"
+    "skeleton": "~2.0.4",
+    "modernizr": "~2.8.3",
+    "foundation-icons": "*"
   }
 }

@@ -5,12 +5,19 @@
     %title 11:11 Films | Tagline
     %script{:src => 'js/1111.js'}
     %link{:rel => 'stylesheet', :type => 'text/css', :href => 'css/1111.css'}
-
+    %link{:href => "http://fonts.googleapis.com/css?family=Roboto:400,100,300,500,100italic,400italic", :rel => "stylesheet", :type => "text/css"}/
   %body
     .masthead
-      .container
-        .row
-          %h1 11:11 Films
+      .header-video
+        %img.header-video--media{:src => 'images/masthead.jpg', :data => {:video_src => '87701971', :teaser_src => 'video/masthead-teaser', :provider => 'vimeo', :video_width => '500', :video_height => '281'}}
+        / %a#video-trigger.video-trigger{:href => 'http://vimeo.com/87701971'}
+        / Play Video
+      .header-video-overlay
+        .masthead-table
+          .masthead-inner
+            %h1
+              11:11 Films
+            %a.cta-button.button{:href => '#'} More about us
     .main-body
       .container
         .row
