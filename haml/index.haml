@@ -5,7 +5,7 @@
     %title 11:11 Films | Tagline
     %script{:src => 'js/1111.js'}
     %link{:rel => 'stylesheet', :type => 'text/css', :href => 'css/1111.css'}
-    %link{:href => "http://fonts.googleapis.com/css?family=Roboto:400,100,300,500,100italic,400italic", :rel => "stylesheet", :type => "text/css"}/
+    %link{:href => "http://fonts.googleapis.com/css?family=Lato:400,100,300,500,700,100italic,400italic", :rel => "stylesheet", :type => "text/css"}/
   %body
     .masthead
       .header-video
@@ -19,10 +19,55 @@
               11:11 Films
             %a.cta-button.button{:href => '#'} More about us
     .main-body
-      .about
+      .about.section
         .row
-          %h5 About Us
+          .section-title.center
+            %h5.title About Us
+            %h6.callout What are we all about?
+            .title-icon
+              %span
+                %i.fi-info
           .left-text
             %p Mumblecore tattooed you probably haven't heard of them artisan brunch, put a bird on it Godard yr XOXO plaid four loko. Chambray sriracha sartorial, cornhole cray four dollar toast DIY gluten-free farm-to-table. Master cleanse biodiesel slow-carb, hoodie mixtape gluten-free direct trade.
             %p Chia semiotics shabby chic roof party heirloom disrupt. Fingerstache XOXO organic, ugh authentic synth raw denim kitsch. Carles artisan banh mi, 3 wolf moon Marfa locavore beard. Keytar biodiesel plaid, kogi tattooed authentic fanny pack XOXO craft beer pug Vice Schlitz disrupt.
+      .spacer.image-spacer
+        .overlay
+      .contact.section
+        .section-title.center
+          %h5.title Contact Us
+          %h6.callout Get in touch with us!
+          .title-icon
+            %span
+              %i.fi-mail
+          %p on it Godard yr XOXO plaid four loko. Chambray sriracha sartorial, cornhole cray four dollar toast DIY gluten-free farm-to-table. Master cleanse biodiesel slow-carb, hoodie mixtape gluten-free direct trade.
+        .container
+          .row
+            .four.columns
+              %h5 Visit Something
+              %ul.icon-list
+                %li
+                  %i.fi-marker
+                  %strong Address:
+                  Boise Street, Berkeley, CA
+                %li
+                  %i.fi-telephone
+                  %strong Phone:
+                  555 555 5555
+                %li
+                  %i.fi-mail
+                  %strong Email:
+                  email@email.com
+            .eight.columns
+              %form
+                .row
+                  .six.columns
+                    %label Name
+                    %input{:type => 'text'}
+                  .six.columns
+                    %label Email
+                    %input{:type => 'email'}
+                  .twelve-columns
+                    %label Message
+                    %textarea
+
 
